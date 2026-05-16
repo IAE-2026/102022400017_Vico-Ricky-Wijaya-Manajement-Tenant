@@ -1,166 +1,182 @@
 # 🤖 AI Prompting Log — Tugas 2 IAE
 
 **Service:** Tenant Management Service  
-**Mahasiswa:** [Nama Anda]  
-**NIM:** [NIM Anda]  
+**Mahasiswa:** Vico Ricky Wijaya  
+**NIM:** 102022400017  
 **Mata Kuliah:** BBK2HAB3 - Integrasi Aplikasi Enterprise  
+**Tanggal Pengerjaan:** 17 Mei 2026  
+**AI Tool:** Claude
 
 ---
 
-## Log Sesi 1 — Arsitektur & Setup Project
-
-**Tanggal:** [Tanggal]  
-**Tool AI:** Claude (Anthropic)
+## Sesi 1 — Pembuatan Struktur Project
 
 ### Prompt 1
 **Input:**
 ```
-Saya diberi tugas membuat service Manajemen Tenant untuk matakuliah Integrasi Aplikasi Enterprise.
-Service harus memiliki:
-- POST /api/v1/tenants (penyewa daftar diri + upload dokumen)
-- GET /api/v1/tenants (admin listing)
-- GET /api/v1/tenants/{id} (admin ambil detail)
-- Mengikuti Standard Integration Contract IAE-T2 (wrapper JSON, X-IAE-KEY auth)
-- Swagger documentation
-- GraphQL dengan Lighthouse
-- Docker
+Saya diberi tugas seperti diatas dan harus disesuaikan dengan standarisasinya sesuai pdf tersebut, 
+yang dimana saya harus membuat service Manajement Tenant dengan fitur seperti ini:
 
-Bantu saya membuat struktur project Laravel yang lengkap.
+Sistem mengharuskan penyewa membuat akun Data Diri POST /api/v1/[resource]
+Penyewa daftarkan diri + upload data (Post)
+Sistem menyimpan profil tenant dan memvalidasi
+Sistem membuat Draft Kontrak yang sudah disetujui dengan Data Penyewa (Service C)
+Admin melakukan Listing terhadap Tenant (Service C) (Get) Mengambil daftar data
+Admin dapat mendapatkan info tertentu dari tenant (Service C) (Get) Mengambil data spesifik
+
+Berdasarkan dari penjelasan saya diatas tolong bantu saya mengerjakan tugas tersebut yang dimana 
+saya sudah membuat repository
+jadi bantu saya mengerjakan ini hingga seluruh standarisasi dan tugasnya tercapai
 ```
 
-**Output AI:**
-- Membuat struktur folder project Laravel 11
-- Membuat `docker-compose.yml` dan `Dockerfile` untuk containerisasi
-- Membuat nginx config di `docker/nginx.conf`
-
-**Evaluasi:**
-- Output sesuai kebutuhan
-- Struktur folder mengikuti konvensi Laravel
-
 ---
+
+## Sesi 2 — Setup dan Troubleshooting
 
 ### Prompt 2
 **Input:**
 ```
-Sekarang buat migration untuk tabel tenants dan contracts.
-Tabel tenants harus punya: name, email, phone, id_number, address, occupation, 
-emergency_contact, document_path, status (pending/verified/rejected), notes, verified_at.
-Tabel contracts harus terhubung ke tenants dengan foreign key.
+terjadi error seperti ini (cp .env.example .env — Cannot find path)
 ```
-
-**Output AI:**
-- Migration `create_tenants_table` dengan semua kolom yang diminta + softDeletes
-- Migration `create_contracts_table` dengan foreign key ke tenants
-
-**Evaluasi:**
-- Foreign key constraint sudah benar
-- Enum status sesuai alur bisnis
 
 ---
 
 ### Prompt 3
 **Input:**
 ```
-Buat Middleware untuk validasi X-IAE-KEY sesuai Standard Integration Contract IAE-T2.
-Header key: X-IAE-KEY, value: NIM Mahasiswa.
-Response error harus mengikuti wrapper format: {status, message, errors}.
+tampilan ls pada folder sekarang (hanya ada folder tenant-service)
 ```
-
-**Output AI:**
-- `CheckApiKey.php` middleware
-- Return 401 jika header tidak ada
-- Return 403 jika API key salah
-
-**Evaluasi:**
-- Sudah sesuai dengan spec IAE-T2
-- Error response menggunakan wrapper yang benar
 
 ---
 
 ### Prompt 4
 **Input:**
 ```
-Buat TenantController dengan:
-1. index() - listing semua tenant dengan pagination dan filter status
-2. show($id) - detail tenant dengan relasi contracts
-3. store() - registrasi tenant baru, upload dokumen, dan auto-create draft contract
-4. verify() - admin verifikasi tenant
-
-Semua response harus menggunakan wrapper JSON IAE-T2.
-Tambahkan Swagger/OpenAPI annotations yang lengkap.
+terjadi error saat aku memasukkan docker-compose up -d --build 
+(unable to get image nginx:alpine — failed to connect to docker API)
 ```
-
-**Output AI:**
-- Controller lengkap dengan 4 method
-- Swagger annotations `@OA\Get`, `@OA\Post`, `@OA\Patch`
-- Validasi input dengan `Validator::make()`
-- Auto-generate contract number dengan `Str::random()`
-
-**Evaluasi:**
-- Status code sudah benar (200, 201, 404, 422)
-- Swagger annotations mencakup semua endpoint
 
 ---
 
 ### Prompt 5
 **Input:**
 ```
-Buat GraphQL schema untuk Lighthouse dengan:
-- Query tenants (list dengan filter)  
-- Query tenant(id) (detail)
-- Type Tenant dengan relasi contracts
-- Type Contract dengan relasi tenant
-- Enum untuk status
+failed to solve: process "/bin/sh -c chown -R www-data..." did not complete successfully
 ```
-
-**Output AI:**
-- `graphql/schema.graphql` lengkap
-- Pagination menggunakan `@paginate`
-- Relasi `@hasMany` dan `@belongsTo`
-- Guard `@guard(with: ["iae-key"])`
-
-**Evaluasi:**
-- Schema mengikuti konvensi Lighthouse
-- Tipe data sudah tepat
 
 ---
 
 ### Prompt 6
 **Input:**
 ```
-Buat README.md yang komprehensif dengan:
-- Instruksi setup Docker step by step
-- Dokumentasi semua endpoint dengan contoh curl
-- Contoh query GraphQL
-- Tabel compliance Standard Integration Contract
+berikut tampilan setelah docker-compose up -d --build dan saat docker ps 
+sudah menampilkan 3 container apakah sudah benar?
 ```
 
-**Output AI:**
-- README.md lengkap dengan semua instruksi
-- Contoh cURL untuk setiap endpoint
-- Contoh GraphQL query
-- Tabel compliance IAE-T2
+---
 
-**Evaluasi:**
-- Dokumentasi jelas dan mudah diikuti
-- Mencakup semua requirement tugas
+### Prompt 7
+**Input:**
+```
+berikut adalah tampilan saat saya mengrun docker exec tenant-service-app composer install 
+(100% selesai tapi ada Could not open input file: artisan)
+```
 
 ---
 
-## Refleksi
-
-### Apa yang dipelajari dari penggunaan AI:
-1. AI sangat membantu dalam men-generate boilerplate code yang konsisten
-2. Perlu tetap memvalidasi output AI terhadap requirement spesifik (IAE-T2 contract)
-3. Prompting yang spesifik menghasilkan output yang lebih tepat sasaran
-4. AI membantu memahami best practice Laravel (middleware, model relationship, dll)
-
-### Bagian yang dikerjakan sendiri (tanpa AI):
-- Memahami alur bisnis tenant management
-- Menyesuaikan contract number format
-- Testing endpoint di Postman
-- Konfigurasi `.env` sesuai NIM
+### Prompt 8
+**Input:**
+```
+hasil saat php artisan --version (Could not open input file: artisan)
+```
 
 ---
 
-*Log ini dibuat sebagai bukti penggunaan AI secara transparan sesuai ketentuan tugas.*
+### Prompt 9
+**Input:**
+```
+hasil saat php artisan --version (bootstrap/cache directory must be present and writable)
+```
+
+---
+
+### Prompt 10
+**Input:**
+```
+terjadi error saat mengrun php artisan l5-swagger:generate 
+(Class App\Http\Controllers\Controller not found)
+```
+
+---
+
+### Prompt 11
+**Input:**
+```
+terjadi error saat php artisan cache:clear 
+(Table tenant_service.cache doesn't exist)
+```
+
+---
+
+### Prompt 12
+**Input:**
+```
+apakah error ini terjadi karena xampp saya belum saya hidupkan atau 
+pada pengerjaan ini tidak diperlukan penggunaan xampp?
+```
+
+---
+
+### Prompt 13
+**Input:**
+```
+masih terjadi error swagger (HTTP 500) saat membuka /api/documentation
+```
+
+---
+
+### Prompt 14
+**Input:**
+```
+Swagger muncul tapi "Failed to load API definition" 
+(Internal Server Error /docs)
+```
+
+---
+
+### Prompt 15
+**Input:**
+```
+ditampilkan bahwa api key tidak ditampilkan apakah hal tersebut masuk standarisasi?
+```
+
+---
+
+### Prompt 16
+**Input:**
+```
+response 403 Forbidden saat execute di Swagger (Invalid API Key)
+```
+
+---
+
+### Prompt 17
+**Input:**
+```
+GraphQL Playground muncul tapi "Failed to find class TenantPaginator"
+```
+
+---
+
+### Prompt 18
+**Input:**
+```
+saat aku mengklik run button nya tidak bisa apakah itu error?
+```
+
+---
+
+### Prompt 19
+**Input:**
+```
+apakah akan baik baik saja atau error? (git add . dengan warning LF/CRLF)
