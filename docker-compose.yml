@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tenant-service-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./storage/app/public:/var/www/storage/app/public
+    networks:
+      - tenant-network
+    depends_on:
+      - db
+    environment:
+      - APP_ENV=local
+      - APP_KEY=${APP_KEY}
+      - DB_HOST=db
+      - DB_DATABASE=${DB_DATABASE:-tenant_service}
+      - DB_USERNAME=${DB_USERNAME:-tenant_user}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+
+  webserver:
+    image: nginx:alpine
+    container_name: tenant-service-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - tenant-network
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: tenant-service-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-tenant_service}
+      MYSQL_USER: ${DB_USERNAME:-tenant_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootsecret}
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - tenant-network
+
+networks:
+  tenant-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
