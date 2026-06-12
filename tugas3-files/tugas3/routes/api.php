@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->middleware('check.api.key')->group(function () {
 
     // ─── Tenant Resource (Tugas 2) ──────────────────────────────────────
     Route::get('/tenants', [TenantController::class, 'index']);

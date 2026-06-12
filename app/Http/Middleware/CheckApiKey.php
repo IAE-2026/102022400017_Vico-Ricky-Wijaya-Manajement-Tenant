@@ -24,7 +24,7 @@ class CheckApiKey
             ], 401);
         }
 
-        if ($apiKey !== config('app.iae_api_key')) {
+        if ($apiKey !== config('iae.api_key')) {
             return response()->json([
                 'status'  => 'error',
                 'message' => 'Invalid API Key.',
