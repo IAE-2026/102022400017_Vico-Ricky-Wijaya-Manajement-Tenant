@@ -18,24 +18,42 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Validation failed',
-                'errors'  => $e->errors(),
-            ], 422);
+        // Validation errors → 422 JSON
+        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Validation failed',
+                    'errors'  => $e->errors(),
+                ], 422);
+            }
         });
 
-        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Resource not found',
-                'errors'  => null,
-            ], 404);
+        // 404 Not Found → JSON wrapper
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Resource not found',
+                    'errors'  => null,
+                ], 404);
+            }
         });
 
-        $exceptions->render(function (\Throwable $e) {
-            if (request()->is('api/*')) {
+        // 405 Method Not Allowed → JSON wrapper
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Method not allowed',
+                    'errors'  => null,
+                ], 405);
+            }
+        });
+
+        // General server errors
+        $exceptions->render(function (\Throwable $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
                     'status'  => 'error',
                     'message' => config('app.debug') ? $e->getMessage() : 'Internal server error',

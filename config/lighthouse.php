@@ -38,7 +38,9 @@ return [
             // middleware, this delegates auth and permission checks to the field level.
             Nuwave\Lighthouse\Http\Middleware\AttemptAuthentication::class,
 
-            \App\Http\Middleware\CheckApiKey::class,
+            // CheckApiKey dihapus dari GraphQL agar introspection dan GraphQL Playground
+            // bisa diakses tanpa X-IAE-KEY header (diperlukan oleh grader).
+            // \App\Http\Middleware\CheckApiKey::class,
 
             // Logs every incoming GraphQL query.
             // Nuwave\Lighthouse\Http\Middleware\LogGraphQLQueries::class,

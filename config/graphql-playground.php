@@ -1,21 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     /*
     |--------------------------------------------------------------------------
-    | Route Configuration
+    | GraphQL Playground route name
     |--------------------------------------------------------------------------
+    | Route name yang digunakan untuk mengakses GraphQL Playground.
+    | Playground dapat diakses di: /api/v1/graphql-playground
+    */
+    'route_name' => 'graphql-playground',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Route configuration
+    |--------------------------------------------------------------------------
+    | Prefix untuk route Playground agar accessible di /api/v1/graphql-playground
     */
     'route' => [
-        'uri' => '/api/v1/graphql-playground',
-        'name' => 'graphql-playground',
+        'prefix' => 'api/v1',
+        'domain' => env('GRAPHQL_PLAYGROUND_DOMAIN', null),
         'middleware' => [],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | GraphQL Endpoint URL
+    | Default GraphQL endpoint
+    |--------------------------------------------------------------------------
+    | Endpoint yang digunakan oleh Playground untuk mengirim query GraphQL
+    */
+    'endpoint' => env('APP_URL', 'http://localhost:8000') . '/api/v1/graphql',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Control Playground availability
     |--------------------------------------------------------------------------
     */
-    'endpoint' => '/api/v1/graphql',
+    'enabled' => env('GRAPHQL_PLAYGROUND_ENABLED', true),
 ];
