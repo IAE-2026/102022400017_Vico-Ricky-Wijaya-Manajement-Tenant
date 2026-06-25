@@ -1,0 +1,181 @@
+{
+  "info": {
+    "name": "Tenant Management Service - IAE Tugas 2",
+    "description": "Koleksi request untuk testing Tenant Management Service\n\n**PENTING:** Ganti nilai `X-IAE-KEY` dengan NIM Anda di setiap request.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "nim",
+      "value": "102022400017",
+      "type": "string",
+      "description": "Ganti dengan NIM Anda"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/health",
+        "description": "Cek apakah service berjalan"
+      }
+    },
+    {
+      "name": "REST API",
+      "item": [
+        {
+          "name": "[Collection] GET All Tenants",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-IAE-KEY", "value": "{{nim}}" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/tenants",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "tenants"],
+              "query": [
+                { "key": "status", "value": "pending", "disabled": true },
+                { "key": "per_page", "value": "15", "disabled": true },
+                { "key": "page", "value": "1", "disabled": true }
+              ]
+            },
+            "description": "Mengambil daftar semua tenant. Admin listing."
+          }
+        },
+        {
+          "name": "[Resource] GET Tenant by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-IAE-KEY", "value": "{{nim}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/tenants/1",
+            "description": "Mengambil detail satu tenant berdasarkan ID beserta riwayat kontrak."
+          }
+        },
+        {
+          "name": "[Action] POST Register Tenant",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-IAE-KEY", "value": "{{nim}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Dewi Lestari", "type": "text" },
+                { "key": "email", "value": "dewi.lestari@example.com", "type": "text" },
+                { "key": "phone", "value": "081234567893", "type": "text" },
+                { "key": "id_number", "value": "3374040404990004", "type": "text" },
+                { "key": "address", "value": "Jl. Diponegoro No.15, Semarang", "type": "text" },
+                { "key": "occupation", "value": "Dokter", "type": "text" },
+                { "key": "emergency_contact", "value": "081266666666", "type": "text" },
+                { "key": "document", "src": "", "type": "file", "description": "Upload file KTP (opsional)" }
+              ]
+            },
+            "url": "{{base_url}}/api/v1/tenants",
+            "description": "Penyewa mendaftarkan diri. Sistem akan membuat draft kontrak secara otomatis."
+          }
+        },
+        {
+          "name": "[Action] PATCH Verify Tenant",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "X-IAE-KEY", "value": "{{nim}}" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"verified\",\n  \"notes\": \"Dokumen lengkap dan valid, identitas sudah dikonfirmasi.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{base_url}}/api/v1/tenants/1/verify",
+            "description": "Admin memverifikasi tenant. Jika verified, kontrak draft otomatis menjadi approved."
+          }
+        },
+        {
+          "name": "[Error Test] GET Tenant Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-IAE-KEY", "value": "{{nim}}" }
+            ],
+            "url": "{{base_url}}/api/v1/tenants/9999",
+            "description": "Test response 404 ketika tenant tidak ditemukan."
+          }
+        },
+        {
+          "name": "[Error Test] Missing API Key",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/tenants",
+            "description": "Test response 401 ketika X-IAE-KEY tidak disertakan."
+          }
+        },
+        {
+          "name": "[Error Test] Invalid API Key",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-IAE-KEY", "value": "INVALID_KEY_12345" }
+            ],
+            "url": "{{base_url}}/api/v1/tenants",
+            "description": "Test response 403 ketika X-IAE-KEY salah."
+          }
+        }
+      ]
+    },
+    {
+      "name": "GraphQL",
+      "item": [
+        {
+          "name": "Query - Get All Tenants",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-IAE-KEY", "value": "{{nim}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetTenants {\\n  tenants {\\n    id\\n    name\\n    email\\n    status\\n    contracts {\\n      contract_number\\n      status\\n    }\\n  }\\n}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{base_url}}/api/v1/graphql",
+            "description": "GraphQL query untuk mengambil daftar tenant"
+          }
+        },
+        {
+          "name": "Query - Get Tenant by ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-IAE-KEY", "value": "{{nim}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetTenant {\\n  tenant(id: 1) {\\n    id\\n    name\\n    email\\n    phone\\n    status\\n    contracts {\\n      contract_number\\n      status\\n    }\\n  }\\n}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{base_url}}/api/v1/graphql",
+            "description": "GraphQL query untuk mengambil detail satu tenant"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,823 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Tenant Management Service API",
+        "description": "API untuk manajemen penyewa (tenant) - BBK2HAB3 Integrasi Aplikasi Enterprise Tugas 2",
+        "contact": {
+            "email": "your.email@student.telkomuniversity.ac.id"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api/v1",
+            "description": "Tenant Service API Server"
+        }
+    ],
+    "paths": {
+        "/integration/sso/login": {
+            "post": {
+                "tags": [
+                    "Integration"
+                ],
+                "summary": "[Modul 1] Login ke IAE SSO sebagai Warga",
+                "description": "Login menggunakan email dan password warga ke IAE Central SSO. Mengembalikan JWT token dan memetakan user ke roles lokal.",
+                "operationId": "de1b224725a2706f70d1b5903524e56f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "warga17@ktp.iae.id"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "KtpDigital2026!"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login berhasil, JWT token dikembalikan"
+                    },
+                    "401": {
+                        "description": "Kredensial tidak valid"
+                    }
+                },
+                "security": [
+                    {
+                        "X-IAE-KEY": []
+                    }
+                ]
+            }
+        },
+        "/integration/sso/m2m": {
+            "post": {
+                "tags": [
+                    "Integration"
+                ],
+                "summary": "[Modul 1] Login M2M ke IAE SSO",
+                "description": "Login Machine-to-Machine menggunakan API Key untuk keperluan service-to-service.",
+                "operationId": "eee85bad939d5dd72b7837e6cd33d4ba",
+                "responses": {
+                    "200": {
+                        "description": "M2M token berhasil didapat"
+                    }
+                },
+                "security": [
+                    {
+                        "X-IAE-KEY": []
+                    }
+                ]
+            }
+        },
+        "/integration/soap/audit": {
+            "post": {
+                "tags": [
+                    "Integration"
+                ],
+                "summary": "[Modul 2] Kirim SOAP Audit ke IAE Central",
+                "description": "Mengirim log transaksi kritis dalam format SOAP/XML ke server IAE. Menyimpan ReceiptNumber dari response.",
+                "operationId": "5808be34632aff5090e1c257c697cdfb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "bearer_token",
+                                    "activity_name",
+                                    "log_data"
+                                ],
+                                "properties": {
+                                    "bearer_token": {
+                                        "description": "JWT token dari SSO",
+                                        "type": "string"
+                                    },
+                                    "activity_name": {
+                                        "type": "string",
+                                        "example": "TenantVerified"
+                                    },
+                                    "log_data": {
+                                        "type": "object",
+                                        "example": {
+                                            "tenant_id": 1,
+                                            "action": "verified"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "SOAP audit berhasil, ReceiptNumber dikembalikan"
+                    },
+                    "422": {
+                        "description": "Validasi gagal"
+                    }
+                },
+                "security": [
+                    {
+                        "X-IAE-KEY": []
+                    }
+                ]
+            }
+        },
+        "/integration/soap/logs": {
+            "get": {
+                "tags": [
+                    "Integration"
+                ],
+                "summary": "[Modul 2] Lihat riwayat SOAP Audit Log",
+                "operationId": "9eb0439e6c2c6e2632432559dffb8d09",
+                "responses": {
+                    "200": {
+                        "description": "Daftar audit log"
+                    }
+                },
+                "security": [
+                    {
+                        "X-IAE-KEY": []
+                    }
+                ]
+            }
+        },
+        "/integration/amqp/publish": {
+            "post": {
+                "tags": [
+                    "Integration"
+                ],
+                "summary": "[Modul 3] Publish Event ke RabbitMQ",
+                "description": "Mengirim event notification dalam format JSON ke RabbitMQ IAE Central secara asinkron.",
+                "operationId": "688c07d75a9ee60184956cf9e3ca23f1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "bearer_token",
+                                    "event_type",
+                                    "payload"
+                                ],
+                                "properties": {
+                                    "bearer_token": {
+                                        "description": "JWT token dari SSO",
+                                        "type": "string"
+                                    },
+                                    "event_type": {
+                                        "type": "string",
+                                        "example": "TenantRegistered"
+                                    },
+                                    "payload": {
+                                        "type": "object",
+                                        "example": {
+                                            "tenant_id": 1,
+                                            "name": "Budi"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Event berhasil dipublish ke RabbitMQ"
+                    }
+                },
+                "security": [
+                    {
+                        "X-IAE-KEY": []
+                    }
+                ]
+            }
+        },
+        "/integration/full-flow/tenant-verified": {
+            "post": {
+                "tags": [
+                    "Integration"
+                ],
+                "summary": "[Full Flow] Verifikasi Tenant + SOAP Audit + AMQP Publish",
+                "description": "Orkestrasi 3 lapis: Login SSO → Kirim SOAP Audit → Publish ke RabbitMQ. Dipanggil otomatis saat admin memverifikasi tenant.",
+                "operationId": "c0766ed1f52210bd37f5a1dbf299d822",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "tenant_id"
+                                ],
+                                "properties": {
+                                    "tenant_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Full flow berhasil"
+                    }
+                },
+                "security": [
+                    {
+                        "X-IAE-KEY": []
+                    }
+                ]
+            }
+        },
+        "/tenants": {
+            "get": {
+                "tags": [
+                    "Tenants"
+                ],
+                "summary": "Mengambil daftar semua tenant",
+                "description": "Admin dapat melihat daftar semua penyewa beserta status dan kontrak terbaru mereka.",
+                "operationId": "add3d86764063069751db7ff285c9ff0",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter berdasarkan status (pending, verified, rejected)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "verified",
+                                "rejected"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah data per halaman (default: 15)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Halaman ke-",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar tenant berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Tenant"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "service_name": {
+                                                    "type": "string",
+                                                    "example": "Tenant-Service"
+                                                },
+                                                "api_version": {
+                                                    "type": "string",
+                                                    "example": "v1"
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "API Key tidak ditemukan"
+                    },
+                    "403": {
+                        "description": "API Key tidak valid"
+                    }
+                },
+                "security": [
+                    {
+                        "X-IAE-KEY": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Tenants"
+                ],
+                "summary": "Mendaftarkan penyewa baru",
+                "description": "Penyewa mendaftarkan diri dengan mengisi data diri dan upload dokumen identitas.",
+                "operationId": "4a17c544719515f2ebee558d3e7ecf02",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "phone",
+                                    "id_number",
+                                    "address"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Budi Santoso"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "budi@email.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "08123456789"
+                                    },
+                                    "id_number": {
+                                        "description": "NIK KTP",
+                                        "type": "string",
+                                        "example": "3374010101990001"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Jl. Merdeka No.1, Bandung"
+                                    },
+                                    "occupation": {
+                                        "type": "string",
+                                        "example": "Software Engineer"
+                                    },
+                                    "emergency_contact": {
+                                        "type": "string",
+                                        "example": "08129999999"
+                                    },
+                                    "document": {
+                                        "description": "Foto/scan KTP (jpg, jpeg, png, pdf - maks 5MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pendaftaran tenant berhasil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tenant registered successfully. Your application is pending review."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TenantDetail"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "service_name": {
+                                                    "type": "string",
+                                                    "example": "Tenant-Service"
+                                                },
+                                                "api_version": {
+                                                    "type": "string",
+                                                    "example": "v1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validasi gagal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "API Key tidak ditemukan"
+                    },
+                    "403": {
+                        "description": "API Key tidak valid"
+                    }
+                },
+                "security": [
+                    {
+                        "X-IAE-KEY": []
+                    }
+                ]
+            }
+        },
+        "/tenants/{id}": {
+            "get": {
+                "tags": [
+                    "Tenants"
+                ],
+                "summary": "Mengambil detail tenant berdasarkan ID",
+                "description": "Admin dapat melihat detail informasi seorang penyewa beserta seluruh kontraknya.",
+                "operationId": "3743d8c09eb48dba3e7b3da07ed8b8a4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID Tenant",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data tenant berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TenantDetail"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "service_name": {
+                                                    "type": "string",
+                                                    "example": "Tenant-Service"
+                                                },
+                                                "api_version": {
+                                                    "type": "string",
+                                                    "example": "v1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tenant tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tenant not found"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "API Key tidak ditemukan"
+                    },
+                    "403": {
+                        "description": "API Key tidak valid"
+                    }
+                },
+                "security": [
+                    {
+                        "X-IAE-KEY": []
+                    }
+                ]
+            }
+        },
+        "/tenants/{id}/verify": {
+            "patch": {
+                "tags": [
+                    "Tenants"
+                ],
+                "summary": "Admin memverifikasi tenant",
+                "description": "Admin mengubah status tenant menjadi verified atau rejected.",
+                "operationId": "77e24756821ddbea0571615b81a39ad2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "verified",
+                                            "rejected"
+                                        ],
+                                        "example": "verified"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Dokumen lengkap dan valid"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status tenant berhasil diperbarui"
+                    },
+                    "404": {
+                        "description": "Tenant tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "API Key tidak ditemukan"
+                    },
+                    "403": {
+                        "description": "API Key tidak valid"
+                    }
+                },
+                "security": [
+                    {
+                        "X-IAE-KEY": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Tenant": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Budi Santoso"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "budi@email.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "08123456789"
+                    },
+                    "id_number": {
+                        "type": "string",
+                        "example": "3374010101990001"
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "Jl. Merdeka No.1, Bandung"
+                    },
+                    "occupation": {
+                        "type": "string",
+                        "example": "Software Engineer"
+                    },
+                    "emergency_contact": {
+                        "type": "string",
+                        "example": "08129999999"
+                    },
+                    "document_original_name": {
+                        "type": "string",
+                        "example": "ktp_budi.jpg"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "verified",
+                            "rejected"
+                        ],
+                        "example": "pending"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "verified_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "datetime"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "datetime"
+                    }
+                },
+                "type": "object"
+            },
+            "TenantDetail": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Tenant"
+                    },
+                    {
+                        "properties": {
+                            "contracts": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Contract"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "Contract": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tenant_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "contract_number": {
+                        "type": "string",
+                        "example": "DRAFT-ABCD1234-1"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "draft",
+                            "approved",
+                            "active",
+                            "terminated"
+                        ],
+                        "example": "draft"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "monthly_rent": {
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "terms": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "approved_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "datetime"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "datetime"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "X-IAE-KEY": {
+                "type": "apiKey",
+                "description": "API Key authentication. Value: NIM Mahasiswa",
+                "name": "X-IAE-KEY",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Integration",
+            "description": "Endpoint integrasi Tugas 3 (SSO, SOAP, AMQP)"
+        },
+        {
+            "name": "Tenants",
+            "description": "Endpoint manajemen data penyewa"
+        }
+    ]
+}

@@ -1,0 +1,156 @@
+URL dan Akun Tugas IAE
+
+URL SSO IAE : https://iae-sso.virtualfri.id
+
+Referensi API
+
+Method
+
+Path
+
+Auth
+
+Deskripsi
+
+GET
+
+GET
+
+GET
+
+POST
+
+/health
+
+—
+
+/api/v1/auth/jwks —
+
+/.well-known/
+jwks.json
+
+—
+
+/api/v1/auth/token Body
+
+POST
+
+/api/v1/auth/token Body
+
+POST
+
+/soap/v1/audit
+
+Bearer
+
+POST
+
+GET
+
+/api/v1/messages/
+publish
+
+Bearer
+
+/api/admin/
+dashboard
+
+X-Admin-Key
+
+Health check 
+JSON
+
+Public keys 
+(RS256) untuk 
+verify JWT
+
+Alias JWKS 
+(OIDC-style)
+
+M2M: 
+{ "api_key": 
+"KEY-MHS-01" }
+
+User: { "email": 
+"warga01@ktp.ia
+e.id", 
+"password": "..." }
+
+Audit XML 
+generic (lihat 
+skema di 
+bawah)
+
+Publish ke 
+iae.central.excha
+nge
+
+Log aktivitas 
+HTML (dosen)
+
+SSO Warga
+Username : wargaXX@ktp.iae.id
+Password: KtpDigital2026!
+
+XX adalah numbering mulai 01 - 41
+
+SOAP
+How to use SOAP
+Tag wajib di dalam SOAP Body:
+
+Tag
+
+<TeamID>
+
+<ActivityName>
+
+<LogContent>
+
+Isi
+
+Identitas tim lab
+
+Nama aktivitas bisnis (bebas per 
+tema)
+
+Data transaksi (CDATA JSON, XML, 
+
+atau teks)
+
+Tag
+
+<TeamID>
+
+<ActivityName>
+
+<LogContent>
+
+Isi
+
+Identitas tim lab
+
+Nama aktivitas bisnis (bebas per 
+tema)
+
+Data transaksi (CDATA JSON, XML, 
+atau teks)
+
+Response sukses:
+<iae:Status>SUCCESS</iae:Status>
+<iae:ReceiptNumber>IAE-LOG-2026-8891A7BC</iae:ReceiptNumber>
+SOAP Sample
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/
+envelope/" xmlns:iae="http://iae.central/audit">
+  <soap:Body>
+    <iae:AuditRequest>
+      <iae:TeamID>TEAM-01</iae:TeamID>
+      <iae:ActivityName>ShipmentCreated</iae:ActivityName>
+      <iae:LogContent><!
+[CDATA[{"order_id":"ORD-8842","origin":"JKT","destination":"
+SBY","weight_kg":12.5}]]></iae:LogContent>
+    </iae:AuditRequest>
+  </soap:Body>
+</soap:Envelope>
+
+

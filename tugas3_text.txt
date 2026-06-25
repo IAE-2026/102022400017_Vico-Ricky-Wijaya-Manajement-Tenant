@@ -1,0 +1,208 @@
+Tugas Besar & Tugas 3
+
+BBK2HAB3  - Integrasi Aplikasi Enterprise
+
+1
+
+Ekky Novriza Alam
+
+Target Luaran
+BBK2HAB3
+
+Program Learning Outcomes (PLO) PRODI
+
+PLO01
+
+PLO08
+
+Mampu menganalisis permasalahan infokom yang komplek, mendeﬁnisikan, dan memodelkan kebutuhan dalam konteks enterprise atau masyarakat 
+dengan menerapkan ilmu dan pengetahuan dalam bidang komputasi, teknologi informasi dan komunikasi, dan disiplin lain yang relevan
+
+Mampu menggunakan teknik, keahlian, atau kakas terkini yang diperlukan untuk menghasilkan solusi di bidang sistem informasi, baik dalam konteks 
+praktikum ataupun kasus nyata
+
+Course Learning Outcomes (CLO)
+
+Level Taksonomi Bloom
+
+PLO yang didukung
+
+PLO01-CLO03
+
+Mampu mengidentiﬁkasi kebutuhan sistem informasi dalam konteks enterprise atau 
+masyarakat
+
+PLO08-CLO03
+
+Mampu menggunakan metode atau perangkat lunak tertentu dalam keilmuan sistem 
+informasi dalam konteks penelitian atau proyek nyata
+
+Apply
+
+Apply
+
+PLO01
+
+PLO08
+
+Sub Course Learning Outcomes (SubCLO)
+
+SubCLO01
+
+SubCLO02
+
+Mampu mengidentiﬁkasi komponen sistem aplikasi enterprise dan menganalisis keterhubungan alur data serta proses bisnis antar aplikasi untuk 
+menentukan kebutuhan integrasi sistem.
+
+Mampu mengimplementasikan mekanisme integrasi data antar aplikasi enterprise sesuai kebutuhan sistem.
+
+Rincian Tugas Besar
+
+Deskripsi
+Kelompok Anda diminta untuk menggabungkan (merger) seluruh mini-service individu yang telah divalidasi pada tugas 
+sebelumnya menjadi satu sistem terintegrasi yang dapat menjalankan satu proses bisnis end-to-end. Seluruh layanan harus 
+dikonsolidasikan/terbungkus oleh API Gateway dan harus terintegrasi dengan Cloud Pusat yang disediakan dosen untuk 
+mensimulasikan proses bisnis nyata skala besar.
+Rubrikasi Komponen Penilaian Kelompok (Bobot Total: 70% dari Nilai Tubes)
+Kriteria Penilaian
+
+Bobot
+
+API Gateway & Routing Hub
+
+End-to-End Core Business Flow
+
+Central Infrastructure 
+Compliance
+
+20%
+
+25%
+
+25%
+
+Indikator Keberhasilan
+Seluruh Service individu telah dibungkus di belakang API 
+Gateway (Nginx/Kong). Tidak ada service internal yang bisa 
+diakses langsung dari luar bypass gateway.
+Alur transaksi berjalan mulus lintas service (Service A memanggil 
+Service B secara internal via REST/GraphQL untuk 
+menyelesaikan skenario bisnis tanpa intervensi manual).
+Sistem kelompok berhasil melakukan orkestrasi 3 lapis eksternal 
+secara berurutan: Login SSO Dosen → Kirim SOAP Audit → 
+Broadcast Event ke RabbitMQ.
+
+Rubrikasi Komponen Penilaian Kontribusi Individu (Bobot Total: 30% dari Nilai Tubes)
+Kriteria Penilaian
+Git Accountability & Code 
+Ownership
+
+Indikator Keberhasilan
+Bukti kontribusi kodingan nyata pada repositori bersama 
+kelompok di GitHub/GitLab.
+
+Bobot
+
+30%
+
+Rincian Tugas 3
+
+Deskripsi
+Tugas 3 anda adalah melaporkan progress pengerjaan Tugas Besar secara individual. Layanan yang anda kerjakan harus terhubung dengan 
+sistem keamanan terpusat (SSO), memvalidasi transaksi paling kritis ke sistem audit versi lama (Legacy SOAP/XML), dan menyebarkan 
+aktivitas bisnisnya secara asinkron ke seluruh departemen perusahaan melalui Message Broker (RabbitMQ).
+Rubrikasi Komponen Analisis (PLO01-CLO03) - 33,33%
+Skor 0 (Tidak Sesuai)
+Kriteria Penilaian
+
+Skor 100 (Sangat Baik)
+
+Skor 60 (Cukup)
+
+Justiﬁkasi Transaksi Kritis 
+dan Sequence Diagram 
+interaksi layanan dengan 
+sistem terpusat (SSO 
+Dosen_
+Rubrikasi Komponen Teknis & Implementasi (PLO08-CLO03) — 66,67%
+Komponen Teknis
+
+Membuat diagram alur, namun transaksi 
+yang dipilih bukan kategori kritis/tidak 
+melibatkan State-Changing.
+
+Tidak ada diagram alur 
+data atau penjelasan 
+fungsional.
+
+Bobot dari 66.67%
+
+Indikator Keberhasilan
+
+Diagram Sequence sangat logis. Berhasil 
+mengidentiﬁkasi 1 transaksi kritis 
+(keuangan/stok) beserta skema role 
+lokalnya.
+
+Modul 1: Federated SSO
+
+Modul 2: SOAP XML Client
+
+Modul 3: AMQP Publisher
+
+Modul 4: Akuntabilitas 
+Progres
+
+30%
+
+40%
+
+20%
+
+10%
+
+Aplikasi sukses menangkap payload JWT dari Cloud Dosen dan berhasil 
+memetakan user ke tabel roles lokal.
+
+Kode SOAP Client berhasil melakukan transformasi data JSON ke format XML 
+Envelope kaku dan menyimpan ReceiptNumber dari Dosen.
+
+Aplikasi berhasil mengirimkan event notiﬁcation dalam bentuk JSON ke RabbitMQ 
+Dosen tanpa memicu error.
+
+Menyertakan dokumen Prompt Engineering Log bersama AI sebagai bukti 
+kemandirian eksplorasi teknis.
+
+Luaran Tugas 3
+Luaran yang harus ada pada repository individual:
+
+
+1. Dokumen analisis (ﬁle analisis_tugas_3.md):  
+
+- Penjelasan transaksi yang dinilai adalah transaksi penting (menggunakan 
+SOAP) dan/atau transaksi yang harus disebarkan (RabbitMQ) 
+- Sequence Diagram Internal yang menggambarkan aliran interaksi dengan 
+layanan terpusat (yang disediakan dosen) 
+
+
+2. Capaian Teknis: Sesuai dengan komponen teknis pada slide sebelumnya
+
+Luaran Tugas Besar
+
+Luaran yang harus dibuat secara kelompok: 
+• Repository untuk menggabungkan layanan (Berisi arsitektur gabungan 
+
+container Docker, konfigurasi API Gateway, dan kode program terintegrasi) 
+
+Luaran yang harus dibuat secara individu: 
+• Kontribusi tim yang tergambarkan pada log commit (buatkan resume 
+
+kontribusinya) 
+
+• Rekap log prompting dengan AI pada sebuah file dengan format .md pada 
+
+repository yang sama
+
+Terima kasih
+
+

@@ -1,0 +1,38 @@
+type Query {
+    tenants(status: String): [Tenant!]! @all
+    tenant(id: ID! @eq): Tenant @find
+    contracts: [Contract!]! @all
+}
+
+type Tenant {
+    id: ID!
+    name: String!
+    email: String!
+    phone: String!
+    id_number: String!
+    address: String!
+    occupation: String
+    emergency_contact: String
+    document_original_name: String
+    status: String!
+    notes: String
+    verified_at: String
+    contracts: [Contract!]! @hasMany
+    created_at: String!
+    updated_at: String!
+}
+
+type Contract {
+    id: ID!
+    tenant_id: Int!
+    contract_number: String!
+    status: String!
+    start_date: String
+    end_date: String
+    monthly_rent: Float
+    terms: String
+    approved_at: String
+    tenant: Tenant! @belongsTo
+    created_at: String!
+    updated_at: String!
+}
