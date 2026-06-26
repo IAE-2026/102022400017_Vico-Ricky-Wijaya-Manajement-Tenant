@@ -233,6 +233,11 @@ class TenantController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        // Support both JSON body (Content-Type: application/json) and form-data
+        if ($request->isJson()) {
+            $request->merge($request->json()->all());
+        }
+
         $validator = Validator::make($request->all(), [
             'name'              => 'required|string|max:255',
             'email'             => 'required|email|unique:tenants,email',
