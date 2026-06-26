@@ -25,14 +25,11 @@ WORKDIR /var/www
 # Copy composer files first (for caching)
 COPY composer.json composer.lock ./
 
-# Install PHP dependencies
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+# Install PHP dependencies will be handled by entrypoint.sh
+# to prevent docker build timeout and ensure sync with bind mounts.
 
 # Copy application files
 COPY . .
-
-# Generate optimized autoloader
-RUN composer dump-autoload --optimize
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
