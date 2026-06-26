@@ -96,3 +96,7 @@ Bisakah kamu menggabungkan seluruh prompt saya? karena saya akan menjadikkanya k
 ### 9.
 Okee nampaknya sudah semua, tolong bantu saya untuk Mengupdate Hasil pengerjaan saya di github saya sebelumnya
 
+
+### 10.
+Oke Karena dosen saya sudah pergi, jadi saya akan mengetesenya nanti jadi tolongkan buatkan rekap apakah yang harus saya lakukan untuk pengecekam akhirnya (Pada postman,Swagger dan Graphql nya)
+
