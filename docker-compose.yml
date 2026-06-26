@@ -8,21 +8,28 @@ services:
     container_name: tenant-service-app
     restart: unless-stopped
     working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - /var/www/vendor
     networks:
       - tenant-network
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - APP_ENV=local
       - APP_KEY=${APP_KEY}
       - APP_URL=http://localhost:8000
+      - DB_CONNECTION=mysql
       - DB_HOST=db
+      - DB_PORT=3306
       - DB_DATABASE=${DB_DATABASE:-tenant_service}
       - DB_USERNAME=${DB_USERNAME:-tenant_user}
       - DB_PASSWORD=${DB_PASSWORD:-secret}
       - IAE_API_KEY=${IAE_API_KEY:-102022400017}
       - L5_SWAGGER_GENERATE_ALWAYS=true
       - L5_SWAGGER_USE_ABSOLUTE_PATH=true
+    entrypoint: ["/var/www/docker/entrypoint.sh"]
 
   webserver:
     image: nginx:alpine
@@ -53,6 +60,12 @@ services:
       - "3306:3306"
     networks:
       - tenant-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-rootsecret}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
 networks:
   tenant-network:

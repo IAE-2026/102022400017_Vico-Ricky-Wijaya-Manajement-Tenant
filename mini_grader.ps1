@@ -73,7 +73,7 @@ try {
 
 # 6. Swagger UI dapat diakses
 try {
-    $r6 = Invoke-WebRequest -Uri "$baseUrl/api/v1/documentation" -Method GET -UseBasicParsing
+    $r6 = Invoke-WebRequest -Uri "$baseUrl/docs" -Method GET -UseBasicParsing
     if ($r6.StatusCode -eq 200) {
         Write-Host "[LULUS] 6. Swagger UI dapat diakses (Status 200)" -ForegroundColor Green; $score++
     }
@@ -83,7 +83,7 @@ try {
 
 # 7. Swagger mencerminkan endpoint REST
 try {
-    $r7 = Invoke-WebRequest -Uri "$baseUrl/api/v1/documentation/docs" -Method GET -UseBasicParsing
+    $r7 = Invoke-WebRequest -Uri "$baseUrl/docs/api-docs" -Method GET -UseBasicParsing
     if ($r7.StatusCode -eq 200 -and $r7.Content -match "/tenants") {
         Write-Host "[LULUS] 7. Swagger mencerminkan endpoint REST (/tenants terbaca)" -ForegroundColor Green; $score++
     }
@@ -93,7 +93,7 @@ try {
 
 # 8. GraphQL Playground dapat diakses
 try {
-    $r8 = Invoke-WebRequest -Uri "$baseUrl/api/v1/graphql-playground" -Method GET -UseBasicParsing
+    $r8 = Invoke-WebRequest -Uri "$baseUrl/graphql-playground" -Method GET -UseBasicParsing
     if ($r8.StatusCode -eq 200 -and $r8.Content -match "graphql") {
         Write-Host "[LULUS] 8. GraphQL Playground dapat diakses (Status 200)" -ForegroundColor Green; $score++
     }
@@ -105,7 +105,7 @@ try {
 try {
     $h9 = @{"Content-Type"="application/json"}
     $b9 = '{"query":"{__schema{queryType{name}}}"}'
-    $r9 = Invoke-WebRequest -Uri "$baseUrl/api/v1/graphql" -Method POST -Headers $h9 -Body $b9 -UseBasicParsing
+    $r9 = Invoke-WebRequest -Uri "$baseUrl/graphql" -Method POST -Headers $h9 -Body $b9 -UseBasicParsing
     if ($r9.StatusCode -eq 200 -and $r9.Content -match "__schema") {
         Write-Host "[LULUS] 9. Query GraphQL (introspection) berhasil" -ForegroundColor Green; $score++
     }

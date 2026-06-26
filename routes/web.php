@@ -4,13 +4,11 @@ use Illuminate\Support\Facades\Route;
 
 // Redirect root ke Swagger UI
 Route::get('/', function () {
-    return redirect('/api/v1/documentation');
+    return redirect('/docs');
 });
 
-Route::get('/docs', function () {
-    return redirect('/api/v1/documentation');
-});
+// Route /docs sudah dihandle otomatis oleh package l5-swagger.
 
 // GraphQL Playground - dihandle oleh package mll-lab/laravel-graphql-playground
 // Route ini terdaftar otomatis oleh package via config/graphql-playground.php
-// yang mengarah ke /api/v1/graphql-playground
+// yang mengarah ke /graphql-playground
