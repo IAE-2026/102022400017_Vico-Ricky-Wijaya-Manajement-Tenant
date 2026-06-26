@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     working_dir: /var/www
+    ports:
+      - "8000:8000"
     networks:
       - tenant-network
     depends_on:
@@ -26,18 +28,6 @@ services:
       - L5_SWAGGER_GENERATE_ALWAYS=true
       - L5_SWAGGER_USE_ABSOLUTE_PATH=true
     entrypoint: ["/var/www/docker/entrypoint.sh"]
-
-  webserver:
-    image: nginx:alpine
-    restart: unless-stopped
-    ports:
-      - "8000:80"
-    volumes:
-      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - tenant-network
-    depends_on:
-      - app
 
   db:
     image: mysql:8.0

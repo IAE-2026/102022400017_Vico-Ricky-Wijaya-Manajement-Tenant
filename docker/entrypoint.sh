@@ -66,4 +66,4 @@ echo "  Swagger: http://localhost:8000/docs"
 echo "  GraphQL: http://localhost:8000/graphql"
 echo "============================================="
 
-exec php-fpm
+exec php artisan serve --host=0.0.0.0 --port=8000
